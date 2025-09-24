@@ -3,6 +3,7 @@
 import { useCartStore } from "@/lib/store/cart";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Counter from "./Counter";
 
 const CartItem = ({ item }) => {
   const increment = useCartStore((s) => s.increment);
@@ -22,23 +23,13 @@ const CartItem = ({ item }) => {
         {formatCurrency(item.totalPrice)}
       </div>
 
-      <div className="flex items-center gap-2 mx-4">
-        <Button
-          onClick={() => decrement(item.id)}
-          className="h-10 w-10 rounded-full bg-[#ec4899] hover:bg-[#a21caf] text-white font-bold p-0"
-          aria-label="decrease"
-        >
-          –
-        </Button>
-        <span className="font-semibold text-stone-800">{item.quantity}</span>
-        <Button
-          onClick={() => increment(item.id)}
-          className="h-10 w-10 rounded-full bg-[#ec4899] hover:bg-[#a21caf] text-white font-bold p-0"
-          aria-label="increase"
-        >
-          +
-        </Button>
-      </div>
+      <Counter
+        value={item.quantity}
+        onDec={() => decrement(item.id)}
+        onInc={() => increment(item.id)}
+        size="md"
+        className="mx-1"
+      />
 
       <Button
         onClick={() => remove(item.id)}
