@@ -1,82 +1,157 @@
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useOrderStore } from "@/lib/store/order";
 import { calcMinutesLeft, formatCurrency, formatDate } from "@/lib/utils";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
-export const order = {
-  id: "XYZ123",
-  status: "preparing", // "preparing" | "on-the-way" | "delivered"
-  customer: "Anggi",
-  phone: "+62-812-3456-7890",
-  address: "Jl. Merdeka No. 45, Jakarta, Indonesia",
-  priority: true,
-  estimatedDelivery: "2027-04-25T10:00:00",
-  cart: [
-    {
-      id: 1,
-      name: "Fjallraven - Foldsack No. 1 Backpack",
-      quantity: 1,
-      unitPrice: 109.95,
-      totalPrice: 109.95,
-    },
-    {
-      id: 2,
-      name: "Mens Casual Premium Slim Fit T-Shirts",
-      quantity: 2,
-      unitPrice: 22.3,
-      totalPrice: 44.6,
-    },
-    {
-      id: 3,
-      name: "Solid Gold Petite Micropave",
-      quantity: 1,
-      unitPrice: 168,
-      totalPrice: 168,
-    },
-  ],
-  position: "-6.200,106.816",
-  orderPrice: 322.55,
-  priorityPrice: Math.round(322.55 * 0.2),
-};
+export default function OrderDetailLocal() {
+  const { orderID } = useParams();
+  const router = useRouter();
+  const getOrder = useOrderStore((s) => s.getOrder);
 
-const OrderDetailPage = () => {
-  const {
-    id,
-    status,
-    priority,
-    priorityPrice,
-    orderPrice,
-    estimatedDelivery,
-    cart,
-  } = order;
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
-  const deliveryIn = calcMinutesLeft(estimatedDelivery);
+  const order = hydrated ? getOrder(orderID) ?? null : null;
+
+  const createdAtISO = order?.createdAtISO ?? null;
+
+  const estimatedDelivery = useMemo(() => {
+    if (!createdAtISO) return null;
+    const t = new Date(createdAtISO).getTime() + 60 * 60 * 1000;
+    return new Date(t).toISOString();
+  }, [createdAtISO]);
+
+  const deliveryIn = estimatedDelivery ? calcMinutesLeft(estimatedDelivery) : 0;
+  const status =
+    estimatedDelivery && deliveryIn >= 0 ? "preparing" : "delivered";
+
+  if (!hydrated) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 space-y-6">
+        <div className="space-y-2">
+          <div className="h-6 w-40 bg-stone-200 rounded animate-pulse" />
+          <div className="h-4 w-28 bg-stone-100 rounded animate-pulse" />
+        </div>
+        <Separator />
+        <div className="space-y-2">
+          <div className="h-5 w-24 bg-stone-200 rounded animate-pulse" />
+          <div className="h-4 w-64 bg-stone-100 rounded animate-pulse" />
+        </div>
+        <Separator />
+        <div className="space-y-2">
+          <div className="h-5 w-20 bg-stone-200 rounded animate-pulse" />
+          <div className="h-4 w-full bg-stone-100 rounded animate-pulse" />
+          <div className="h-4 w-5/6 bg-stone-100 rounded animate-pulse" />
+        </div>
+        <Separator />
+        <div className="h-10 w-48 bg-stone-200 rounded animate-pulse ml-auto" />
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 text-center space-y-3">
+        <h1 className="text-xl font-bold">Order not found</h1>
+        <p className="text-muted-foreground">
+          Coba buat order baru dari cart kamu.
+        </p>
+        <Button onClick={() => router.push("/menu")}>Create new order</Button>
+      </div>
+    );
+  }
+
+  const { id, priority, cart = [], orderPrice, priorityPrice } = order;
   const totalToPay = orderPrice + (priority ? priorityPrice : 0);
 
   return (
-    <div>
-      <div>
-        <h2>Status</h2>
-
-        <div>
-          {priority && <span>Priority</span>}
-          <span>{status} order</span>
+    <div className="max-w-2xl mx-auto p-6 space-y-6">
+      <header className="space-y-1">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl sm:text-2xl font-bold font-grotesk text-[#a21caf]">
+            Order #{id}
+          </h1>
+          <div className="flex items-center gap-2 font-poppins">
+            {priority && <Badge variant="destructive">Priority</Badge>}
+            <Badge variant="secondary" className="capitalize">
+              {status}
+            </Badge>
+          </div>
         </div>
-      </div>
+        {createdAtISO && (
+          <p className="text-sm text-muted-foreground">
+            Placed: {formatDate(createdAtISO)}
+          </p>
+        )}
+      </header>
 
-      <div>
+      <Separator />
+
+      <section className="space-y-1">
+        <h2 className="font-semibold font-grotesk">Status</h2>
         <p>
-          {deliveryIn >= 0
-            ? `Only ${calcMinutesLeft(estimatedDelivery)} minutes left 😃`
+          {estimatedDelivery && deliveryIn >= 0
+            ? `Only ${deliveryIn} minutes left`
             : "Order should have arrived"}
         </p>
-        <p>(Estimated delivery: {formatDate(estimatedDelivery)})</p>
-      </div>
+        {estimatedDelivery && (
+          <p className="text-sm text-muted-foreground">
+            (Estimated delivery: {formatDate(estimatedDelivery)})
+          </p>
+        )}
+      </section>
 
-      <div>
-        <p>Price pizza: {formatCurrency(orderPrice)}</p>
-        {priority && <p>Price priority: {formatCurrency(priorityPrice)}</p>}
-        <p>To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>
+      <Separator />
+
+      <section className="space-y-2">
+        <h2 className="font-semibold font-grotesk">Items</h2>
+
+        {cart.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No items found for this order.
+          </p>
+        ) : (
+          cart.map((item, idx) => (
+            <div key={item.id ?? idx}>
+              <div className="flex justify-between">
+                <span className="font-grotesk">
+                  {item.name} × {item.quantity}
+                </span>
+                <span>{formatCurrency(item.totalPrice)}</span>
+              </div>
+              {idx < cart.length - 1 && <Separator className="my-2" />}
+            </div>
+          ))
+        )}
+      </section>
+
+      <Separator />
+
+      <section className="space-y-1">
+        <h2 className="font-semibold font-grotesk">Payment</h2>
+        <p>Products: {formatCurrency(orderPrice)}</p>
+        {priority && <p>Priority (+20%): {formatCurrency(priorityPrice)}</p>}
+        <Separator className="my-2 opacity-50" />
+        <p className="font-semibold font-grotesk">
+          To pay on delivery: {formatCurrency(totalToPay)}
+        </p>
+      </section>
+
+      <div className="flex justify-end">
+        <Button
+          onClick={() => router.push("/menu")}
+          className="bg-[#ec4899] hover:bg-[#a21caf] text-white font-poppins"
+        >
+          Create another order
+        </Button>
       </div>
     </div>
   );
-};
-
-export default OrderDetailPage;
+}
