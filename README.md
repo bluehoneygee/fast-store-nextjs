@@ -1,4 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Fast Store
+
+A simple e-commerce demo built with Next.js 15, Zustand, Axios, and Shadcn UI.
+Users can browse products, add them to a cart, and place orders with delivery details.
+
+## Features
+
+✅ Product listing fetched from Fake Store API
+
+✅ Cart management with Zustand (persisted in localStorage)
+
+✅ Order creation (with priority option +20%)
+
+✅ Geolocation & reverse geocoding (BigDataCloud API)
+
+✅ Local order detail tracking with estimated delivery time
+
+✅ Responsive UI with Tailwind CSS + Shadcn UI
+
+✅ Global error and not-found handling (app/global-error.jsx, app/not-found.jsx)
+
+## Tech Stack
+
+Next.js 15 (App Router)
+
+React 18
+
+Zustand (state management)
+
+Axios (API requests)
+
+Shadcn UI (UI components)
+
+Tailwind CSS (styling)
 
 ## Getting Started
 
@@ -29,8 +62,3 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
