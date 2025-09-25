@@ -25,7 +25,7 @@ const CreateUser = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 font-poppins">
-      <p className="text-sm text-stone-600 md:text-base">
+      <p className="text-sm text-stone-600 md:text-base font-semibold">
         Welcome!!! Please start by telling us your name:
       </p>
 
@@ -36,7 +36,7 @@ const CreateUser = () => {
           setName(e.target.value);
           if (err) setErr("");
         }}
-        className="w-72"
+        className="w-72 border-[#ec4899] focus-visible:ring-2 focus-visible:ring-[#ec4899]"
       />
 
       {err && (
