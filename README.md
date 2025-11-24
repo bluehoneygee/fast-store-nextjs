@@ -1,64 +1,82 @@
-## Fast Store
+<div align="center">
 
-A simple e-commerce demo built with Next.js 15, Zustand, Axios, and Shadcn UI.
-Users can browse products, add them to a cart, and place orders with delivery details.
+  <h3 align="center">Fast Store</h3>
 
-## Features
+  <div align="center">
+    A Next.js 15 (App Router) demo shop. Browse a Fake Store catalog, build a cart, place orders with delivery details and optional priority, auto-fill addresses from your location, and track the order locally with a delivery countdown.
+  </div>
+</div>
 
-✅ Product listing fetched from Fake Store API
+## 📋 <a name="table">Table of Contents</a>
 
-✅ Cart management with Zustand (persisted in localStorage)
+1. 🤖 [Introduction](#introduction)
+2. ⚙️ [Tech Stack](#tech-stack)
+3. 🔋 [Features](#features)
+4. 🤸 [Quick Start](#quick-start)
 
-✅ Order creation (with priority option +20%)
+## <a name="introduction">🤖 Introduction</a>
 
-✅ Geolocation & reverse geocoding (BigDataCloud API)
+Fast Store is a lightweight e-commerce experience built with the Next.js App Router. Products are fetched from the Fake Store API (or any compatible endpoint you point it to), cart and orders are persisted locally with Zustand, and users can create orders with an optional 20% priority fee. The order detail view runs entirely on the client, showing delivery countdowns and price breakdowns without needing a backend.
 
-✅ Local order detail tracking with estimated delivery time
+The UI uses Tailwind CSS v4 and ShadCN UI components for a clean, responsive layout, plus global error and not-found boundaries for a production-like flow.
 
-✅ Responsive UI with Tailwind CSS + Shadcn UI
+## <a name="tech-stack">⚙️ Tech Stack</a>
 
-✅ Global error and not-found handling (app/global-error.jsx, app/not-found.jsx)
+- Next.js 15 (App Router)
+- React 19 + Server/Client Components
+- Tailwind CSS v4 + ShadCN UI + Radix Primitives
+- Zustand (persisted cart, user, and order stores)
+- Fake Store API (default data source) via `fetch`/Axios
+- TypeScript-ready tooling (ESLint, jsconfig paths)
 
-## Tech Stack
+## <a name="features">🔋 Features</a>
 
-Next.js 15 (App Router)
+👉 **Product catalog**: Fetches items from Fake Store API (override with `NEXT_PUBLIC_API_BASE`) with loading and graceful error states.  
+👉 **Cart with persistence**: Add/remove/increment/decrement items, auto-calculate totals, and keep state in `localStorage`.  
+👉 **Order builder**: Validates customer name/phone/address, supports optional priority surcharge (+20%), and normalizes cart lines.  
+👉 **Address helpers**: Try geolocation + BigDataCloud reverse geocoding to prefill the address; fallback to manual entry.  
+👉 **Order lookup**: Search by order ID from the navbar, view local order details, delivery countdown, and status badges.  
+👉 **Price breakdown**: Clear summary of order price, priority fee, and pay-on-delivery total.  
+👉 **Responsive UI**: Tailwind + ShadCN components, bottom cart overview bar, and global error/not-found boundaries.
 
-React 18
+## <a name="quick-start">🤸 Quick Start</a>
 
-Zustand (state management)
+Follow these steps to run the project locally.
 
-Axios (API requests)
+**Prerequisites**
 
-Shadcn UI (UI components)
+- Git
+- Node.js 18+ (npm included)
 
-Tailwind CSS (styling)
+**Cloning the Repository**
 
-## Getting Started
+```bash
 
-First, run the development server:
+git clone https://github.com/bluehoneygee/fast-store-nextjs
+cd fast-store-nextjs
+```
+
+**Installation**
+
+```bash
+npm install
+```
+
+**Set Up Environment Variables**
+
+Create `.env.local` in the project root (optional override):
+
+```env
+# Change if you use a different product source
+NEXT_PUBLIC_API_BASE=https://fakestoreapi.com
+```
+
+Geolocation and reverse geocoding use the public BigDataCloud endpoint and do not require an API key.
+
+**Running the Project**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
+Visit `http://localhost:3000` to explore the store. Use the navbar search to open an order by its ID after you create one. For a production build, run `npm run build && npm start`.
